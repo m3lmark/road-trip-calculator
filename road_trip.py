@@ -5,10 +5,14 @@ import sys
 import urllib.request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 
 def get_gas_prices():
-    driver = webdriver.Chrome("/usr/local/bin/chromedriver")
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    driver = webdriver.Chrome("/usr/local/bin/chromedriver", chrome_options=options)
     driver.get("https://gasprices.aaa.com/state-gas-price-averages/")
     gas_prices = (
         driver.find_element(By.XPATH, "//table[@id='sortable']")
@@ -16,14 +20,7 @@ def get_gas_prices():
         .split("\n")[1:]
     )
     state_gas_prices = []
-    # state_gas_prices = [
-    #     ["Alaska", 3.719, 3.878, 4.078, 3.555],
-    #     ["Alabama", 3.169, 3.51, 3.817, 3.462],
-    #     ["Arkansas", 3.041, 3.351, 3.635, 3.404],
-    #     ["Arizona", 3.733, 4.003, 4.259, 3.959],
-    #     ["California", 4.704, 4.888, 5.015, 4.839],
-    # ]
-
+    # example state - ["Alaska", 3.719, 3.878, 4.078, 3.555]
     for state in gas_prices:
         split_up = state.split(" ")
         while len(split_up) > 5:
@@ -69,7 +66,9 @@ def output_distance_and_price(markers, state_gas_prices, type_of_gas, mpg):
     total_driving_distance = 0
     total_gas_price = 0.0
     for i in range(len(markers.keys()) - 1):
-        first_mark = pgeocode.Nominatim("us").query_postal_code(list(markers.values())[i])
+        first_mark = pgeocode.Nominatim("us").query_postal_code(
+            list(markers.values())[i]
+        )
         second_mark = pgeocode.Nominatim("us").query_postal_code(
             list(markers.values())[i + 1]
         )
