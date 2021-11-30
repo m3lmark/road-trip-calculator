@@ -126,12 +126,14 @@ def output_distance_and_price(
                 print(f"price of fuel for this section: ${round(gas_price, 2)}")
     print(f"\nTotal distance by car: {total_driving_distance:,}")
     print(f"Total gas price: ${round(total_gas_price, 2)}")
-    number_of_fills = math.ceil(total_driving_distance/buffer_gas_tank)-1
-    print(f"You'll need to stop for gas {number_of_fills} times\n(not including the initial fill up)")
+    number_of_fills = math.ceil(total_driving_distance / buffer_gas_tank) - 1
+    print(
+        f"You'll need to stop for gas {number_of_fills} times\n(not including the initial fill up)"
+    )
     mile_stop = []
     for index in range(number_of_fills):
         print(f"Stop at mile # {int(buffer_gas_tank*(index+1))}")
-        mile_stop.append(int(buffer_gas_tank*(index+1)))
+        mile_stop.append(int(buffer_gas_tank * (index + 1)))
     print(markers)
     return buffer_gas_tank
 
@@ -139,42 +141,56 @@ def output_distance_and_price(
 def get_fuel_stops(waypoints, miles_until_fill):
     waypoints_nested = []
     if len(waypoints) > 2:
-        for i in range(1, len(waypoints)-1):
+        for i in range(1, len(waypoints) - 1):
             waypoints_nested.append([waypoints[i], True])
-    directions_result = gmaps.directions(str(waypoints[0]), str(waypoints[len(waypoints)-1]), waypoints=waypoints_nested)
+    directions_result = gmaps.directions(
+        str(waypoints[0]),
+        str(waypoints[len(waypoints) - 1]),
+        waypoints=waypoints_nested,
+    )
     cleaned_list = []
     miles_list = []
     end_coords = []
-    for thing in str(directions_result).split(','):
-        if 'distance' in thing or 'lat' in thing or 'lng' in thing:
-            to_append = thing.replace("'", '')
-            to_append = to_append.replace('}', '')
-            to_append = to_append.replace('{', '')
-            to_append = to_append.replace(',', '')
-            to_append = to_append.replace(' [distance: text:', '')
-            to_append = to_append.replace('distance: text: ', '')
-            to_append = to_append.replace('lat: ', '')
-            to_append = to_append.replace('lng: ', '')
-            to_append = to_append.replace('location: ', 'location:\n')
-            to_append = to_append.replace(' ', '')
-            if 'ft' in to_append:
-                to_append = ''
-            if 'mi' in to_append:
-                cleaned_list.append('\n' + to_append)
+    for thing in str(directions_result).split(","):
+        if "distance" in thing or "lat" in thing or "lng" in thing:
+            to_append = thing.replace("'", "")
+            to_append = to_append.replace("}", "")
+            to_append = to_append.replace("{", "")
+            to_append = to_append.replace(",", "")
+            to_append = to_append.replace(" [distance: text:", "")
+            to_append = to_append.replace("distance: text: ", "")
+            to_append = to_append.replace("lat: ", "")
+            to_append = to_append.replace("lng: ", "")
+            to_append = to_append.replace("location: ", "location:\n")
+            to_append = to_append.replace(" ", "")
+            if "ft" in to_append:
+                to_append = ""
+            if "mi" in to_append:
+                cleaned_list.append("\n" + to_append)
             else:
                 cleaned_list.append(to_append)
     for i in range(len(cleaned_list)):
-        if 'mi' in cleaned_list[i] and 'legs' not in cleaned_list[i]:
-            miles_list.append(float(cleaned_list[i].replace('steps:', '').replace('mi', '').replace('\n', '')))
+        if "mi" in cleaned_list[i] and "legs" not in cleaned_list[i]:
+            miles_list.append(
+                float(
+                    cleaned_list[i]
+                    .replace("steps:", "")
+                    .replace("mi", "")
+                    .replace("\n", "")
+                )
+            )
             end_coords.append(
-                [float(cleaned_list[i + 2]), float(cleaned_list[i + 3].replace('start_location:', ''))])
+                [
+                    float(cleaned_list[i + 2]),
+                    float(cleaned_list[i + 3].replace("start_location:", "")),
+                ]
+            )
     total = 0
     for z in range(len(miles_list)):
         total += miles_list[z]
         if total >= miles_until_fill:
             print(f"STOP AT: {end_coords[z-1]}")
             total -= miles_until_fill
-
 
 
 prices = get_gas_prices()
