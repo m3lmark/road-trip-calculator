@@ -1,4 +1,4 @@
-# Road Trip Calculator, [Mel Mark](https://m3l.me), 2021
+# Road Trip Calculator, 2021
 # Background
 I love to go on road trips with my dog and camp along the way. I'm also a type A planner that likes to have a rough estimate for costs.
 <br><br>Traditionally, I have used the [United States Department of Energy's price calculator](https://www.fueleconomy.gov/trip/) to estimate the price of fuel, but I believe it could be more accurate.
